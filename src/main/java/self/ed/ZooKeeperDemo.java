@@ -1,6 +1,7 @@
 package self.ed;
 
 import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.ZKUtil;
 import org.apache.zookeeper.ZooKeeper;
 
 import java.io.IOException;
@@ -31,6 +32,16 @@ public class ZooKeeperDemo {
         zk.delete(path, zk.exists(path, true).getVersion());
         System.out.println("Deleted: " + zk.exists(path, true));
 
+        System.out.println("Creating children");
+        zk.create(path, null, OPEN_ACL_UNSAFE, PERSISTENT);
+        zk.create(path + "/DemoChild1", "DemoValue1".getBytes(UTF_8), OPEN_ACL_UNSAFE, PERSISTENT);
+        zk.create(path + "/DemoChild2", "DemoValue2".getBytes(UTF_8), OPEN_ACL_UNSAFE, PERSISTENT);
+        System.out.println("All keys: " + zk.getChildren("/", null));
+        System.out.println("Children keys: " + zk.getChildren(path, null));
+
+        System.out.println("Deleting recursive");
+        ZKUtil.deleteRecursive(zk, path);
+        System.out.println("Deleted recursive: " + zk.exists(path, true));
         zk.close();
     }
 
